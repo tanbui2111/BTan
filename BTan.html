@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366F1;
+      --primary-dark: #4F46E5;
+      --primary-light: #818CF8;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --info: #3B82F6;
+      --dark: #111827;
+      --dark-lighter: #1F2937;
+      --dark-lightest: #374151;
+      --light: #F9FAFB;
+      --gray: #9CA3AF;
+      --gradient-1: linear-gradient(to right, #4F46E5, #818CF8);
+      --gradient-2: linear-gradient(to right, #10B981, #34D399);
+      --gradient-3: linear-gradient(to right, #F59E0B, #FBBF24);
+      --gradient-4: linear-gradient(to right, #EF4444, #F87171);
+      --glow: 0 0 15px rgba(99, 102, 241, 0.5);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #0F172A;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Background Effects */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(rgba(79, 70, 229, 0.05) 1px, transparent 1px), 
+                        linear-gradient(90deg, rgba(79, 70, 229, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      z-index: -2;
+    }
+    
+    .bg-gradient {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      z-index: -1;
+      opacity: 0.7;
+      animation: pulse 8s ease-in-out infinite alternate;
+    }
+    
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      animation: float 20s linear infinite;
+    }
+    
+    /* Main App Container */
+    .app-container {
+      width: 900px;
+      height: 600px;
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    /* Top floating controls */
+    .window-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+      z-index: 100;
+    }
+    
+    .window-control {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .window-control:hover {
+      transform: scale(1.2);
+    }
+    
+    .minimize {
+      background-color: var(--warning);
+    }
+    
+    .maximize {
+      background-color: var(--success);
+    }
+    
+    .close {
+      background-color: var(--danger);
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      height: 100%;
+      background-color: rgba(17, 24, 39, 0.9);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px 0;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
+      border-radius: 10px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .logo-image {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1;
+    }
+    
+    .logo-text span {
+      display: block;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+    
+    .menu-category {
+      padding: 0 20px;
+      margin-bottom: 15px;
+    }
+    
+    .category-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .category-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin-left: 10px;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .menu-item i {
+      font-size: 18px;
+      margin-right: 10px;
+      color: var(--primary);
+      z-index: 2;
+      transition: all 0.2s;
+    }
+    
+    .menu-item span {
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 2;
+      transition: all 0.2s;
+    }
+    
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .menu-item.active {
+      background: rgba(99, 102, 241, 0.15);
+    }
+    
+    .menu-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+    
+    .menu-item.active i, .menu-item.active span {
+      color: var(--primary-light);
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .main-content::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .main-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .main-content::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
+      border-radius: 10px;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header-title h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .header-title p {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 15px;
+      width: 250px;
+    }
+    
+    .search-box i {
+      color: var(--gray);
+      margin-right: 10px;
+    }
+    
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .search-box input::placeholder {
+      color: var(--gray);
+    }
+    
+    /* Tab Navigation */
+    .tab-navigation {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 2px;
+    }
+    
+    .tab-item {
+      padding: 10px 20px;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      transition: all 0.2s;
+      color: var(--gray);
+    }
+    
+    .tab-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+    
+    .tab-item.active {
+      color: white;
+    }
+    
+    .tab-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+    
+    /* Content Panels */
+    .panel {
+      display: none;
+    }
+    
+    .panel.active {
+      display: block;
+    }
+    
+    /* Feature Cards Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    
+    .feature-card {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+    
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(99, 102, 241, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .feature-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .feature-icon.purple {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+    }
+    
+    .feature-icon.green {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+    
+    .feature-icon.orange {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+    
+    .feature-icon.red {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+    
+    .feature-icon.blue {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--info);
+    }
+    
+    .feature-toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      border-radius: 12px;
+      background-color: rgba(55, 65, 81, 0.7);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .feature-toggle.active {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+    
+    .toggle-handle {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: white;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: black;
+    }
+    
+    .feature-toggle.active .toggle-handle {
+      left: calc(100% - 20px);
+    }
+    
+    .feature-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .feature-title {
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+    
+    .feature-description {
+      font-size: 12px;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+    
+    /* Slider Controls */
+    .slider-control {
+      margin-top: 15px;
+    }
+    
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .slider-label {
+      font-size: 12px;
+      color: var(--gray);
+    }
+    
+    .slider-value {
+      font-size: 12px;
+      background: rgba(99, 102, 241, 0.2);
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: var(--primary-light);
+    }
+    
+    .slider-value.green {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+    }
+    
+    .slider-value.orange {
+      background: rgba(245, 158, 11, 0.2);
+      color: #FBBF24;
+    }
+    
+    .slider-value.red {
+      background: rgba(239, 68, 68, 0.2);
+      color: #F87171;
+    }
+    
+    .slider-input {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(55, 65, 81, 0.7);
+      outline: none;
+    }
+    
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    }
+    
+    .slider-input.green::-webkit-slider-thumb {
+      background: var(--success);
+    }
+    
+    .slider-input.green::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    
+    .slider-input.orange::-webkit-slider-thumb {
+      background: var(--warning);
+    }
+    
+    .slider-input.orange::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    }
+    
+    .slider-input.red::-webkit-slider-thumb {
+      background: var(--danger);
+    }
+    
+    .slider-input.red::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+    
+    /* Select Controls */
+    .select-control {
+      margin-top: 15px;
+    }
+    
+    .select-label {
+      font-size: 12px;
+      color: var(--gray);
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .custom-select {
+      width: 100%;
+      background: rgba(55, 65, 81, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .custom-select:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+    
+    .custom-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    
+    .custom-select option {
+      background: var(--dark-lighter);
+      color: white;
+    }
+    
+    /* Separator */
+    .separator {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 20px 0;
+    }
+    
+    /* Section Title */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title i {
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-icon {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      opacity: 0.2;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: var(--gray);
+    }
+    
+    .stat-card.purple .stat-value {
+      color: var(--primary-light);
+    }
+    
+    .stat-card.green .stat-value {
+      color: #34D399;
+    }
+    
+    .stat-card.orange .stat-value {
+      color: #FBBF24;
+    }
+    
+    .stat-card.red .stat-value {
+      color: #F87171;
+    }
+    
+    /* Footer */
+    .app-footer {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--gray);
+      font-size: 12px;
+    }
+    
+    .footer-status {
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    
+    .status-indicator.online {
+      background-color: var(--success);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    
+    .status-indicator.offline {
+      background-color: var(--danger);
+    }
+    
+    /* Animations */
+    @keyframes pulse {
+      0% {
+        opacity: 0.5;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0.7;
+        transform: scale(1.05);
+      }
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.95);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Glow Effects */
+    .glow-effect {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+      filter: blur(20px);
+      opacity: 0.5;
+      z-index: -1;
+      transition: all 0.3s;
+    }
+    
+    .glow-1 {
+      top: -50px;
+      left: 20%;
+    }
+    
+    .glow-2 {
+      bottom: -50px;
+      right: 30%;
+    }
+    
+    /* Notification Badge */
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--danger);
+      color: white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Game List */
+    .game-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .game-item {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .game-item:hover {
+      transform: translateY(-2px);
+      background: rgba(31, 41, 55, 0.8);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+    
+    .game-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--dark-lightest);
+      border-radius: 8px;
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .game-info h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .game-info p {
+      font-size: 11px;
+      color: var(--gray);
+    }
+    
+    /* Button Styles */
+    .btn {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary-light);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Poppins', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn i {
+      margin-right: 8px;
+    }
+    
+    .btn:hover {
+      background: rgba(99, 102, 241, 0.25);
+      transform: translateY(-2px);
+    }
+    
+    .btn.primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary-dark);
+    }
+    
+    .btn.primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn.success:hover {
+      background: rgba(16, 185, 129, 0.25);
+    }
+    
+    .btn.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: #FBBF24;
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+    
+    .btn.warning:hover {
+      background: rgba(245, 158, 11, 0.25);
+    }
+    
+    .btn.danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    .btn.danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+    
+    /* Action Buttons Row */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    /* Custom Scrollbar for Whole Page */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.7);
+    }
+    
+    /* Media Queries */
+    @media (max-width: 1200px) {
+      .app-container {
+        width: 90%;
+        height: 90vh;
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 200px;
+      }
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+        height: 90vh;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .game-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-gradient"></div>
+  
+  <div class="particles" id="particles"></div>
+  
+  <!-- Glow Effects -->
+  <div class="glow-effect glow-1"></div>
+  <div class="glow-effect glow-2"></div>
+  
+  <!-- Main App Container -->
+  <div class="app-container" id="appContainer">
+    <!-- Window Controls -->
+    <div class="window-controls">
+      <div class="window-control minimize" id="minimizeBtn" data-tooltip="Minimize"></div>
+      <div class="window-control maximize" id="maximizeBtn" data-tooltip="Maximize"></div>
+      <div class="window-control close" id="closeBtn" data-tooltip="Close"></div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <div class="logo-image">
+          <i class="ri-gamepad-line"></i>
+        </div>
+        <div class="logo-text">
+          BTan Sensitivity<span>5.0 Limited Edition</span>
+        </div>
+      </div>
+      
+      <div class="menu-category">
+        <div class="category-title">Menu DNS </div>
+        <div class="menu-item active" data-panel="dashboard">
+          <i class="ri-dashboard-line"></i>
+          <span>Tuỳ Chọn Chức Năng</span>
+        </div>
+        <div class="menu-item" data-panel="games">
+          <i class="ri-gamepad-line"></i>
+          <span>Mục Này Đang Được Bảo Trì !</span>
+        </div>
+        <div class="menu-item" data-panel="features">
+          <i class="ri-function-line"></i>
+          <span>DPI </span>
+          <div class="notification-badge">3</div>
+        </div>
+        <div class="menu-item" data-panel="settings">
+          <i class="ri-settings-3-line"></i>
+          <span>Settings</span>
+        </div>
+      </div>
+      
+      <div class="menu-category">
+        <div class="category-title">VHaiDang DNS</div>
+        <div class="menu-item">
+          <i class="ri-crosshair-line"></i>
+          <span>UMP Trick</span>
+        </div>
+        <div class="menu-item">
+          <i class="ri-eye-line"></i>
+          <span>ShotGunLock</span>
+        </div>
+        <div class="menu-item">
+          <i class="ri-speed-line"></i>
+          <span>Touch Sensitivy</span>
+        </div>
+        <div class="menu-item">
+          <i class="ri-shield-line"></i>
+          <span>Bảo Vệ Tài Khoản</span>
+        </div>
+        <div class="menu-item">
+          <i class="ri-magic-line"></i>
+          <span>Trợ Năng iOS </span>
+        </div>
+      </div>
+      
+      <div class="menu-category">
+        <div class="category-title">Cài Đặt </div>
+        <div class="menu-item">
+          <i class="ri-user-line"></i>
+          <span>Tài Khoản</span>
+        </div>
+        <div class="menu-item">
+          <i class="ri-information-line"></i>
+          <span>Hỗ Trợ</span>
+        </div>
+        <div class="menu-item">
+          <i class="ri-download-line"></i>
+          <span>App Updates</span>
+          <div class="notification-badge">1</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Dashboard Panel -->
+      <div class="panel active" id="dashboard">
+        <div class="header">
+          <div class="header-title">
+            <h1>Thông Báo</h1>
+            <p>BuiTanBaRo Xin Kính Chào Quý Khách 🫰</p>
+          </div>
+          <div class="search-box">
+            <i class="ri-search-line"></i>
+            <input type="text" placeholder="Search features...">
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card purple">
+            <div class="stat-icon">
+              <i class="ri-gamepad-line"></i>
+            </div>
+            <div class="stat-value">20000</div>
+            <div class="stat-label">Số Người Đang Sử Dụng</div>
+          </div>
+          
+          <div class="stat-card green">
+            <div class="stat-icon">
+              <i class="ri-check-double-line"></i>
+            </div>
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Độ An Toàn - Antiband</div>
+          </div>
+          
+          <div class="stat-card orange">
+            <div class="stat-icon">
+              <i class="ri-pulse-line"></i>
+            </div>
+            <div class="stat-value">120</div>
+            <div class="stat-label">FPS</div>
+          </div>
+          
+          <div class="stat-card red">
+            <div class="stat-icon">
+              <i class="ri-user-line"></i>
+            </div>
+            <div class="stat-value">20000</div>
+            <div class="stat-label">Tổng Số Khách Hàng</div>
+          </div>
+        </div>
+        
+        <div class="section-title">
+          <i class="ri-rocket-line"></i> Chức Năng DNS
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon purple">
+                <i class="ri-aim-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="aimbot">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">AimLock Mode 🎯</div>
+              <div class="feature-description">Dễ Dàng Kéo Tâm, Tâm Bám Đầu Chặt </div>
+              
+              <div class="slider-control">
+                <div class="slider-header">
+                  <div class="slider-label">Lực Kéo</div>
+                  <div class="slider-value">76%</div>
+                </div>
+                <input type="range" class="slider-input" min="1" max="100" value="50" data-target="smoothness" data-suffix="%">
+              </div>
+              
+              <div class="slider-control">
+                <div class="slider-header">
+                  <div class="slider-label">Độ Bám Của Tâm Súng </div>
+                  <div class="slider-value">54%</div>
+                </div>
+                <input type="range" class="slider-input" min="1" max="100" value="25" data-target="fov" data-suffix="%">
+              </div>
+              
+              <div class="select-control">
+                <div class="select-label">Ứng Dụng Khởi Chạy</div>
+                <select class="custom-select">
+                  <option>Free Fire</option>
+                  <option>Free Fire Max</option>
+                  <option>Tắt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon green">
+                <i class="ri-eye-line"></i>
+              </div>
+              <div class="feature-toggle active" data-feature="esp">
+                <div class="toggle-handle">✓</div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Touch Sensi 5.0 📲</div>
+              <div class="feature-description">Điều Chỉnh Độ Mượt Và Nhạy Bén Của Thiết Bị</div>
+              
+              <div class="slider-control">
+                <div class="slider-header">
+                  <div class="slider-label">Cảm Giác Chạm</div>
+                  <div class="slider-value green">283 DPI</div>
+                </div>
+                <input type="range" class="slider-input green" min="50" max="500" value="200" data-target="esp-distance" data-suffix="m">
+              </div>
+              
+              <div class="select-control">
+                <div class="select-label">Ứng Dụng Khởi Chạy</div>
+                <select class="custom-select">
+                  <option>Free Fire</option>
+                  <option>Free Fire Max</option>
+                  <option>Tắt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon orange">
+                <i class="ri-speed-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="speed">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">AutoFPS+</div>
+              <div class="feature-description">Tự động cân bằng và giữ FPS ổn định</div>
+              
+              <div class="slider-control">
+                <div class="slider-header">
+                  <div class="slider-label">FPS</div>
+                  <div class="slider-value orange">54 FPS</div>
+                </div>
+                <input type="range" class="slider-input orange" min="1" max="5" step="0.1" value="2" data-target="speed" data-suffix="x">
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon red">
+                <i class="ri-ghost-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="noclip">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Recoil Control ⚡️</div>
+              <div class="feature-description">Theo Dõi Đầu Tốc Độ Cao
+Nhạy - Mượt - Nhanh 📱</div>
+              
+              <div class="select-control">
+                <div class="select-label">Ứng Dụng Khởi Chạy</div>
+                <select class="custom-select">
+                  <option>Free Fire</option>
+                  <option>Free Fire Max</option>
+                  <option>Tắt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon blue">
+                <i class="ri-shield-line"></i>
+              </div>
+              <div class="feature-toggle active" data-feature="antiban">
+                <div class="toggle-handle">✓</div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Antiband</div>
+              <div class="feature-description">Kiểm soát độ an toàn của tài khoản 100%</div>
+              
+              <div class="select-control">
+                <div class="select-label">Ứng Dụng Khởi Chạy</div>
+                <select class="custom-select">
+                  <option>Free Fire</option>
+                  <option>Free Fire Max</option>
+                  <option>Tắt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon purple">
+                <i class="ri-magic-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="misc">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">CleanRam Ultra</div>
+              <div class="feature-description">Dọn sạch Ram thừa, tăng hiệu năng chơi Game</div>
+              
+              <div class="select-control">
+                <div class="select-label">Hệ Điều Hành</div>
+                <select class="custom-select" multiple>
+                  <option selected>iOS</option>
+                  <option>Android</option>
+                  <option selected>MacOS</option>
+                  <option>Window</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn primary">
+            <i class="ri-play-circle-line"></i> BTan - Founder AppConfig
+          </button>
+          <button class="btn">
+            <i class="ri-settings-line"></i> Copyright: BuiTanBaRo
+          </button>
+          <button class="btn danger">
+            <i class="ri-computer-line"></i> Id TikTok: minhtomff_211
+          </button>
+        </div>
+      </div>
+      
+      
+      <!-- Features Panel -->
+      <div class="panel" id="features">
+        <div class="header">
+          <div class="header-title">
+            <h1>Chức Năng Tổng Hợp</h1>
+            <p>Các Chức Năng Hỗ trợ Kéo Tâm Của BuiTanBaRo</p>
+          </div>
+          <div class="search-box">
+            <i class="ri-search-line"></i>
+            <input type="text" placeholder="Search features...">
+          </div>
+        </div>
+        
+        <div class="tab-navigation">
+          <div class="tab-item active" data-tab="combat">DNS</div>
+          <div class="tab-item" data-tab="visual">Aim</div>
+          <div class="tab-item" data-tab="movement">FPS+</div>
+          <div class="tab-item" data-tab="misc">HeadLock</div>
+        </div>
+        
+        <div class="section-title">
+          <i class="ri-crosshair-line"></i> Chức Năng DNS BuiTanBaRo
+        </div>
+        
+        <div class="features-grid">
+          <!-- Combat Features - Row 1 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon purple">
+                <i class="ri-aim-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="aimbot-advanced">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">TelePort</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon red">
+                <i class="ri-fire-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="recoil">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">AntiBand</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon orange">
+                <i class="ri-expand-left-right-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="spread">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">SmoothShot</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <!-- Combat Features - Row 2 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon green">
+                <i class="ri-focus-3-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="silent-aim">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">AimStabilizer</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon blue">
+                <i class="ri-timer-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="rapid-fire">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Booster FPS</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon purple">
+                <i class="ri-magic-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="magic-bullet">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">AutoHead</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="separator"></div>
+        
+        <div class="section-title">
+          <i class="ri-eye-line"></i> Các Chức Năng DNS Nâng Cao 
+        </div>
+        
+        <div class="features-grid">
+          <!-- Visual Features - Row 1 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon green">
+                <i class="ri-eye-line"></i>
+              </div>
+              <div class="feature-toggle active" data-feature="player-esp">
+                <div class="toggle-handle">✓</div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Target Lock - On</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon blue">
+                <i class="ri-box-3d-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="box-esp">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Vertical Offset</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon orange">
+                <i class="ri-contrast-2-line"></i>
+              </div>
+              <div class="feature-toggle" data-feature="chams">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Auto Arc</div>
+              <div class="feature-description"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Settings Panel -->
+      <div class="panel" id="settings">
+        <div class="header">
+          <div class="header-title">
+            <h1>Settings</h1>
+            <p>Chọn Các Chức Năng Bảo Vệ - Hỗ Trợ Máy</p>
+          </div>
+        </div>
+        
+        <div class="section-title">
+          <i class="ri-settings-3-line"></i> Chức Năng iOS - Android
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon purple">
+                <i class="ri-shield-keyhole-line"></i>
+              </div>
+              <div class="feature-toggle active" data-feature="security">
+                <div class="toggle-handle">✓</div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Bảo Mật Thông Tin</div>
+              <div class="feature-description"></div>
+              
+              <div class="select-control">
+                <div class="select-label">Mức Độ</div>
+                <select class="custom-select">
+                  <option>An Toàn Tuyệt Đối</option>
+                  <option selected>Bình Thường</option>
+                  <option>Tắt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon green">
+                <i class="ri-cpu-line"></i>
+              </div>
+              <div class="feature-toggle active" data-feature="performance">
+                <div class="toggle-handle">✓</div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Hệ Thống Thiết Bị</div>
+              <div class="feature-description"></div>
+              
+              <div class="slider-control">
+                <div class="slider-header">
+                  <div class="slider-label">FPS Thiết Bị</div>
+                  <div class="slider-value green">243</div>
+                </div>
+                <input type="range" class="slider-input green" min="30" max="300" step="1" value="144" data-target="fps" data-suffix="">
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon orange">
+                <i class="ri-keyboard-line"></i>
+              </div>
+              <div class="feature-toggle active" data-feature="keybinds">
+                <div class="toggle-handle">✓</div>
+              </div>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Bảo Vệ Tài Khoản</div>
+              <div class="feature-description"></div>
+              
+              <div class="select-control">
+                <div class="select-label">Mức Bảo Vệ</div>
+                <select class="custom-select">
+                  <option selected>Cao</option>
+                  <option>Thấp</option>
+                  <option>Tắt</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="app-footer">
+        <div>AppConfig Limited | © BuiTanBaRo 2025-2026 | Mọi Thông Tin Khách Hàng Đều Được Bảo Mật ! </div>
+        <div class="footer-status">
+          <div class="status-indicator online"></div>
+          <span>Đang Hoạt Động</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create particles
+    document.addEventListener("DOMContentLoaded", function() {
+      const particles = document.getElementById('particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random position, size and delay
+        const size = Math.random() * 3 + 1;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${left}%`;
+        particle.style.top = '100%';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
+        
+        particles.appendChild(particle);
+      }
+    });
+    
+    // Window controls
+    const minimizeBtn = document.getElementById('minimizeBtn');
+    const maximizeBtn = document.getElementById('maximizeBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const appContainer = document.getElementById('appContainer');
+    
+    let isMaximized = false;
+    
+    minimizeBtn.addEventListener('click', () => {
+      appContainer.style.transform = 'scale(0.1)';
+      appContainer.style.opacity = '0';
+      
+      // Restore after 500ms (simulated minimize)
+      setTimeout(() => {
+        appContainer.style.transform = 'scale(1)';
+        appContainer.style.opacity = '1';
+      }, 500);
+    });
+    
+    maximizeBtn.addEventListener('click', () => {
+      if (isMaximized) {
+        appContainer.style.width = '900px';
+        appContainer.style.height = '600px';
+        isMaximized = false;
+      } else {
+        appContainer.style.width = '95vw';
+        appContainer.style.height = '95vh';
+        isMaximized = true;
+      }
+    });
+    
+    closeBtn.addEventListener('click', () => {
+      appContainer.style.transform = 'scale(0.9)';
+      appContainer.style.opacity = '0';
+      
+      // Reload the page after 500ms (simulated close)
+      setTimeout(() => {
+        location.reload();
+      }, 500);
+    });
+    
+    // Sidebar menu navigation
+    const menuItems = document.querySelectorAll('.menu-item[data-panel]');
+    const panels = document.querySelectorAll('.panel');
+    
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Remove active class from all items
+        menuItems.forEach(mi => mi.classList.remove('active'));
+        
+        // Add active class to clicked item
+        item.classList.add('active');
+        
+        // Show corresponding panel
+        const panelId = item.getAttribute('data-panel');
+        panels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === panelId) {
+            panel.classList.add('active');
+          }
+        });
+      });
+    });
+    
+    // Tab navigation
+    const tabItems = document.querySelectorAll('.tab-item');
+    
+    tabItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Get parent tab navigation
+        const tabNavigation = item.parentElement;
+        
+        // Remove active class from siblings
+        tabNavigation.querySelectorAll('.tab-item').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        
+        // Add active class to clicked tab
+        item.classList.add('active');
+      });
+    });
+    
+    // Feature toggles
+    const featureToggles = document.querySelectorAll('.feature-toggle');
+    
+    featureToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('active');
+        const handle = toggle.querySelector('.toggle-handle');
+        
+        if (toggle.classList.contains('active')) {
+          handle.textContent = '✓';
+        } else {
+          handle.textContent = '';
+        }
+      });
+    });
+    
+    // Sliders
+    const sliders = document.querySelectorAll('.slider-input');
+    
+    sliders.forEach(slider => {
+      const valueDisplay = slider.parentElement.querySelector('.slider-value');
+      const suffix = slider.getAttribute('data-suffix') || '';
+      
+      slider.addEventListener('input', () => {
+        valueDisplay.textContent = slider.value + suffix;
+      });
+    });
+    
+    // Make app container draggable
+    let isDragging = false;
+    let offsetX, offsetY;
+    
+    // Variables to track if click was a drag or just a click
+    let startX, startY;
+    let hasMoved = false;
+    
+    appContainer.addEventListener('mousedown', (e) => {
+      // Only allow dragging from the header areas
+      const target = e.target;
+      const isHeader = target.closest('.header') || target.closest('.logo') || target.classList.contains('mod-header');
+      
+      if (isHeader && !e.target.closest('button, input, select')) {
+        isDragging = true;
+        
+        const rect = appContainer.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        
+        startX = e.clientX;
+        startY = e.clientY;
+        hasMoved = false;
+        
+        appContainer.style.cursor = 'grabbing';
+      }
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+        
+        // Check if movement is significant enough to be considered a drag
+        if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
+          hasMoved = true;
+        }
+        
+        appContainer.style.transform = `translate(${x}px, ${y}px)`;
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        appContainer.style.cursor = 'auto';
+      }
+    });
+    
+    // Prevent dragstart event on images
+    document.querySelectorAll('img').forEach(img => {
+      img.addEventListener('dragstart', (e) => e.preventDefault());
+    });
+    
+    // Simulate loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.body.classList.add('loaded');
+      }, 500);
+    });
+  </script>
+</body>
+</html>
